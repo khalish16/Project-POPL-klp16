@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int              @id @default(autoincrement())
+  username        String           @unique
+  passwordHash    String
+  createdAt       DateTime         @default(now())
+  profile         UserProfile?
+  nutrition       NutritionProfile?
+  workouts        WorkoutSession[]
+  progress        BodyProgress[]
+  measurements    BodyMeasurement[]
+  progressPhotos  ProgressPhoto[]
+}
+
+model UserProfile {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  age          Int?
+  gender       String?
+  height       Float?
+  weight       Float?
+  targetWeight Float?
+  targetBodyFat Float?
+  goal         String?
+  user         User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+  updatedAt    DateTime @updatedAt
+}
+
+model NutritionProfile {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  age              Int
+  gender           String
+  height           Float
+  weight           Float
+  activityLevel    String
+  goal             String
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+
+model WorkoutSession {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  name        String
+  status      String    @default("AKTIF")
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields:[userId], references:[id], onDelete:Cascade)
+  exercises   Exercise[]
+}
+
+model Exercise {
+  id         Int           @id @default(autoincrement())
+  workoutId  Int
+  name       String
+  orderIndex Int
+  createdAt  DateTime      @default(now())
+  workout    WorkoutSession @relation(fields:[workoutId], references:[id], onDelete:Cascade)
+  sets       ExerciseSet[]
+}
+
+model ExerciseSet {
+  id         Int      @id @default(autoincrement())
+  exerciseId Int
+  weight     Float
+  reps       Int
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  exercise   Exercise @relation(fields:[exerciseId], references:[id], onDelete:Cascade)
+}
+
+model BodyProgress {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  weight    Float
+  bodyFat   Float?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+
+model BodyMeasurement {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  chest     Float?
+  waist     Float?
+  arm       Float?
+  thigh     Float?
+  hip       Float?
+  measuredAt DateTime @default(now())
+  user      User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+
+model ProgressPhoto {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  path      String
+  caption   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
