@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import {UserService} from '@/lib/services/UserService';import {setSession} from '@/lib/auth';
+export async function POST(req:Request){try{const {username,password}=await req.json();const user=await new UserService().login(username,password);await setSession(user.id);return NextResponse.json({success:true})}catch(e:any){return NextResponse.json({message:e.message||'Gagal login.'},{status:401})}}
