@@ -1,0 +1,1 @@
+export class WorkoutCalculator { volume(weight:number,reps:number){ return weight*reps; } totalVolume(sets:{weight:number;reps:number}[]){ return sets.reduce((sum,s)=>sum+this.volume(s.weight,s.reps),0); } totalSets(setsCount:number){ return setsCount; } }
