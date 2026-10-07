@@ -1,0 +1,2 @@
+import { prisma } from '@/lib/prisma';
+export class ProgressService { async list(userId:number){return prisma.bodyProgress.findMany({where:{userId},orderBy:{createdAt:'asc'}});} async add(userId:number,data:{weight:number;bodyFat?:number}){return prisma.bodyProgress.create({data:{userId,...data}});} async delete(userId:number,id:number){return prisma.bodyProgress.deleteMany({where:{id,userId}});} }
